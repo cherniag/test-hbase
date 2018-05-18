@@ -11,6 +11,10 @@ import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.client.coprocessor.AggregationClient;
 import org.apache.hadoop.hbase.client.coprocessor.LongColumnInterpreter;
 import org.apache.hadoop.hbase.coprocessor.ColumnInterpreter;
+import org.apache.hadoop.hbase.filter.BinaryComparator;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.protobuf.generated.HBaseProtos.EmptyMsg;
 import org.apache.hadoop.hbase.protobuf.generated.HBaseProtos.LongMsg;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -67,7 +71,11 @@ public class Start {
         Scan scan = new Scan();
         //scan.addFamily(COLUMN_SCORE); // specify column family
         scan.addColumn(COLUMN_SCORE, QUALIFIER_2); // specify column family with qualifier
-        scan.setTimeRange(1526645985026L, 1526645985029L); // filter by timestamp
+        //scan.setTimeRange(1526645985026L, 1526645985029L); // filter by timestamp
+
+        // Create filter, while specifying the comparison operator and comparator.
+        Filter rowIdFilter = new RowFilter(CompareFilter.CompareOp.LESS, new BinaryComparator(Bytes.toBytes("row5")));
+        scan.setFilter(rowIdFilter);
 
         // should have the same type of column values
         ColumnInterpreter<Long, Long, EmptyMsg, LongMsg, LongMsg> ci = new LongColumnInterpreter();
